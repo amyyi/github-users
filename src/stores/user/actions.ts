@@ -1,0 +1,19 @@
+import { ResUser, ResUserDetail } from '../../apis/users'
+import { AppError } from '../../constants/errors'
+
+export enum USER_ACTION_TYPES {
+  GET_LIST_REQUEST = 'USER/GET_LIST_REQUEST',
+  GET_LIST_FAILURE = 'USER/GET_LIST_FAILURE',
+  GET_LIST_SUCCESS = 'USER/GET_LIST_SUCCESS',
+  GET_USER_DETAIL_REQUEST = 'USER/GET_USER_DETAIL_REQUEST',
+  GET_USER_DETAIL_FAILURE = 'USER/GET_USER_DETAIL_FAILURE',
+  GET_USER_DETAIL_SUCCESS = 'USER/GET_USER_DETAIL_SUCCESS',
+}
+
+export type UserAction =
+  | { type: USER_ACTION_TYPES.GET_LIST_REQUEST }
+  | { type: USER_ACTION_TYPES.GET_LIST_FAILURE; payload: AppError }
+  | { type: USER_ACTION_TYPES.GET_LIST_SUCCESS; payload: ResUser[] }
+  | { type: USER_ACTION_TYPES.GET_USER_DETAIL_REQUEST }
+  | { type: USER_ACTION_TYPES.GET_USER_DETAIL_FAILURE; payload: AppError }
+  | { type: USER_ACTION_TYPES.GET_USER_DETAIL_SUCCESS; payload: ResUserDetail }
