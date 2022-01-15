@@ -29,7 +29,3 @@ jobs:
           test_key: ${{secrets.TEST_KEY}}
         env:
           TEST_KEY: ${{secrets.TEST_KEY}}
-      - name: 'print test key'
-        id: customer-var
-        run: |
-          echo: "::test key ${{secrets.TEST_KEY}}"
