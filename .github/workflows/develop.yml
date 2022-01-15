@@ -25,6 +25,7 @@ jobs:
       - run: npm install -g bats
       - run: bats -v
       - name: 'hello world action'
+      - uses: actions/checkout@v1
         with:
           test_key: ${{secrets.TEST_KEY}}
         env:
