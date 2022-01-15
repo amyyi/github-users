@@ -24,8 +24,3 @@ jobs:
           node-version: '14'
       - run: npm install -g bats
       - run: bats -v
-      - name: 'hello world action'
-        with:
-          test_key: ${{secrets.TEST_KEY}}
-        env:
-          TEST_KEY: ${{secrets.TEST_KEY}}
