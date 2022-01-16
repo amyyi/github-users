@@ -24,6 +24,4 @@ jobs:
       - name: 'Secret key'
       - uses: aws-actions/configure-aws-credentials@v1
         with:
-          test_key: ${{secrets.TEST_KEY}}
-        env:
-          TEST_KEY: ${{secrets.TEST_KEY}}
+          aws-access-key-id: ${{secrets.AWS_ACCESS_KEY_ID}}
