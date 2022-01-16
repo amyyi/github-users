@@ -10,7 +10,10 @@ name: github users deploy workflow
 
 on:
   push:
-    branches: [main, release/**, demo/**,]
+    branches:
+      - main
+      - 'release/**'
+      - 'demo/**'
       # Sequence of patterns matched against refs/tags
     # tags:
     #   - release/**
