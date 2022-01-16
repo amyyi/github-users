@@ -1,23 +1,9 @@
-# Bill
-# https://docs.github.com/en/actions/learn-github-actions/usage-limits-billing-and-administration#about-billing-for-github-actions
-# work run time: each workflow run is limited 72 hours
-# job queue time: limited 24 hours
-# Api requests: execute up to 1000 API
-# job matrix: can generate a maximum of 256 jobs per workflow run
-# No more than 500 workflow runs can de queue in a 10 second interval per repo
-
-name: github users deploy workflow
-
-on: [push]
 jobs:
-  # job name: deploy
   example-job:
-    # the job to run on the latest version of an Ubuntu Linux runner.
-    # It could run on a fresh virtual machine hosted by Github.
     runs-on: ubuntu-latest
     steps:
-      - name: 'Secret key'
+      - name: Retrieve secret
         env:
-          aws-access-key-id: ${{secrets.AWS_ACCESS_KEY_ID}}
+          super_secret: ${{ secrets.SUPERSECRET }}
         run: |
-          example-command "$aws-access-key-id"
+          example-command "$super_secret"
