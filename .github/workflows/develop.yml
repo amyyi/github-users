@@ -14,5 +14,5 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Retrieve secret
-        env:
+        with:
           super_secret: ${{ secrets.SUPERSECRET }}
