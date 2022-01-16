@@ -20,8 +20,8 @@ jobs:
       # checks out your repo onto the runner, allowing you run scripts or other actions
       - uses: actions/checkout@v2
 
-      - name: 'hello world action'
-        id: custome-var
+      - name: 'secret key'
+        uses: aws-actions/configure-aws-credentials@v1
         with:
           test_key: ${{secrets.TEST_KEY}}
         env:
