@@ -17,15 +17,14 @@ jobs:
     name: Deploy
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      # - name: Checkout
       # checks out your repo onto the runner, allowing you run scripts or other actions
         # uses: actions/checkout@v2
-        # set the secret as an input
-        with:
-          aws-access-key-id: ${{secrets.AWS_ACCESS_KEY_ID}}
-        env:
-          aws-access-key-id: ${{secrets.AWS_ACCESS_KEY_ID}}
-
+        - shell: bash
+          env:
+            aws-access-key-id: ${{secrets.AWS_ACCESS_KEY_ID}}
+          run: |
+            example-command "$SUPER_SECRET"
       # - name: 'Secret key'
         # uses: aws-actions/configure-aws-credentials@v1
         # with:
