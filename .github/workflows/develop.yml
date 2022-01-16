@@ -1,3 +1,14 @@
+# Bill
+# https://docs.github.com/en/actions/learn-github-actions/usage-limits-billing-and-administration#about-billing-for-github-actions
+# work run time: each workflow run is limited 72 hours
+# job queue time: limited 24 hours
+# Api requests: execute up to 1000 API
+# job matrix: can generate a maximum of 256 jobs per workflow run
+# No more than 500 workflow runs can de queue in a 10 second interval per repo
+
+name: github users deploy workflow
+
+on: [push]
 jobs:
   example-job:
     runs-on: ubuntu-latest
