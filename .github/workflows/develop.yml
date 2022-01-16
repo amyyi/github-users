@@ -17,9 +17,9 @@ jobs:
     name: Deploy
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      # - name: Checkout
       # checks out your repo onto the runner, allowing you run scripts or other actions
-      - uses: actions/checkout@v2
+      # - uses: actions/checkout@v2
 
       - name: 'Secret key'
         uses: aws-actions/configure-aws-credentials@v1
