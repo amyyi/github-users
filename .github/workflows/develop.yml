@@ -32,6 +32,8 @@ jobs:
     # It could run on a fresh virtual machine hosted by Github.
     name: Deploy
     runs-on: ubuntu-latest
+    env:
+      DAY_OF_WEEK: Mon
     steps:
       # - name: Checkout
       # checks out your repo onto the runner, allowing you run scripts or other actions
@@ -39,7 +41,8 @@ jobs:
         - shell: bash
           env:
             aws-access-key-id: ${{secrets.AWS_ACCESS_KEY_ID}}
-          run: echo "::set-output $aws-access-key-id"
+          if: ${{env.DAY_OF_WEEK == 'Mon'}}
+          run: echo "Hello Monday"
       # - name: 'Secret key'
         # uses: aws-actions/configure-aws-credentials@v1
         # with:
