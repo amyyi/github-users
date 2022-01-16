@@ -14,14 +14,10 @@ jobs:
   deploy:
     # the job to run on the latest version of an Ubuntu Linux runner.
     # It could run on a fresh virtual machine hosted by Github.
-    name: Deploy
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-      # checks out your repo onto the runner, allowing you run scripts or other actions
-      - uses: actions/checkout@v2
-
       - name: 'Secret key'
-      - uses: aws-actions/configure-aws-credentials@v1
-        with:
+        env:
           aws-access-key-id: ${{secrets.AWS_ACCESS_KEY_ID}}
+        run: |
+          example-command "$aws-access-key-id"
