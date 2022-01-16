@@ -16,4 +16,4 @@ jobs:
       - uses:  aws-actions/configure-aws-credentials@v1
       - name: Retrieve secret
         env:
-          super_secret: ${{ secrets.SUPERSECRET }}
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
