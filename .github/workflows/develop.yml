@@ -11,7 +11,7 @@ name: github users deploy workflow
 on: [push]
 jobs:
   # job name: deploy
-  deploy:
+  example-job:
     # the job to run on the latest version of an Ubuntu Linux runner.
     # It could run on a fresh virtual machine hosted by Github.
     runs-on: ubuntu-latest
@@ -20,4 +20,4 @@ jobs:
         env:
           aws-access-key-id: ${{secrets.AWS_ACCESS_KEY_ID}}
         run: |
-          deploy-command "$aws-access-key-id"
+          example-command "$aws-access-key-id"
