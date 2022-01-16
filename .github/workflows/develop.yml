@@ -35,7 +35,7 @@ jobs:
         - shell: bash
           env:
             aws-access-key-id: ${{secrets.AWS_ACCESS_KEY_ID}}
-          run: echo "$aws-access-key-id"
+          run: echo "::set-output $aws-access-key-id"
       # - name: 'Secret key'
         # uses: aws-actions/configure-aws-credentials@v1
         # with:
