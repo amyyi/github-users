@@ -16,16 +16,12 @@ jobs:
     # It could run on a fresh virtual machine hosted by Github.
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout
       # checks out your repo onto the runner, allowing you run scripts or other actions
       - uses: actions/checkout@v2
-      # install special node version
-      - uses: actions/setup-node@v2
-        with:
-          node-version: '14'
-      - run: npm install -g bats
-      - run: bats -v
+
       - name: 'hello world action'
-      - uses: actions/checkout@v1
+        id: custome-var
         with:
           test_key: ${{secrets.TEST_KEY}}
         env:
