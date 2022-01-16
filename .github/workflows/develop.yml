@@ -41,8 +41,10 @@ jobs:
         - shell: bash
           env:
             aws-access-key-id: ${{secrets.AWS_ACCESS_KEY_ID}}
-          if: ${{env.DAY_OF_WEEK == 'Mon'}}
-          run: echo "Hello Monday"
+            event-context: ${{ toJSON(github.event)}}
+          # if: ${{env.DAY_OF_WEEK == 'Mon'}}
+          run: |
+            echo $event-context
       # - name: 'Secret key'
         # uses: aws-actions/configure-aws-credentials@v1
         # with:
