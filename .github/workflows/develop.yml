@@ -38,8 +38,8 @@ jobs:
         run: |
           echo "::set-output name=short-sha::$(git rev-parse --short=8 HEAD)"
           echo "::set-output name=build-time::$(TZ=Asia/Taipei date +'%Y-%m-%dT%H:%M:%S%z')"
-          echo "::set-output name=branch::${GITHUB_REF#refs/heads/}"
+          echo "::set-output name=branch::${GITHUB_HEAD_REF}"
 
       - name: Get variable(short sha, branch name)
         run: |
-          echo "Short sha ${{steps.customize-var.outputs.short-sha}},Version ${{steps.customize-var.outputs.branch}}"
+          echo "Short sha ${{steps.customize-var.outputs.short-sha}},branch ${{steps.customize-var.outputs.branch}}"
