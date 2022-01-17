@@ -56,12 +56,13 @@ jobs:
       #   run: yarn install && yarn test
 
       - name: Build dev static site
+        # change develop
         if: ${{steps.customize-var.outputs.branch != 'main'}}
         run: |
           echo "s3 bucket name ${{env.AWS_S3_BUCKET_DEV}}"
 
       - name: Build prod static site
-        if: ${{steps.customize-var.outputs.branch != 'main'}}
+        if: ${{steps.customize-var.outputs.branch == 'main'}}
         run: |
           echo "s3 bucket name ${{env.AWS_S3_BUCKET_PROD}}"
 
