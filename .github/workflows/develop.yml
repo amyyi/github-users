@@ -36,7 +36,7 @@ jobs:
         id: customize-var
         # set short-sha = $(git rev-parse --short=8 HEAD)"
         run: |
-          echo "::set-output name=short-sha::$(git rev-parse --short "$GITHUB_SHA")"
+          echo "::set-output name=short-sha::$(git rev-parse "$GITHUB_SHA")"
       - name: Get short sha2
         run: |
           echo "The short sha is ${{steps.customize-var.outputs.short-sha}}"
