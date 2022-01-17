@@ -31,7 +31,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Get short sha
-        id: custome-var
+      - name: Set short sha
+        #  set variable should give it a id
+        id: customize-var
+        # set short-sha = $(git rev-parse --short=8 HEAD)"
         run: |
           echo "::set-output name=short-sha::$(git rev-parse --short=8 HEAD)"
+      - name: Get short sha
+        run: |
+          echo "The short sha is ${{steps.customize-var.outputs.short-sha}}"
