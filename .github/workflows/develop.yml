@@ -32,6 +32,6 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Get short sha
-        id: customize-var
+        id: custome-var
         run: |
           echo "::set-output name=short-sha::$(git rev-parse --short=8 HEAD)"
