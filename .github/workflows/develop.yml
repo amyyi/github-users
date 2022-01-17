@@ -11,41 +11,27 @@ name: github users deploy workflow
 on:
   push:
     branches:
+      # change main to master
       - main
-      # release/XX or release/**/** would run action
       # https://docs.github.com/en/actions/learn-github-actions/workflow-syntax-for-github-actions#patterns-to-match-branches-and-tags
-      - 'release/**'
-      - 'demo/**'
       # will remove
       - 'test/action/*'
       # Sequence of patterns matched against refs/tags
     # tags:
-    #   - release/**
-    #   # matches all version branching and tags with major version 1 or 2
-    #   - v[12].[0-9]+.[0.9]+
+      # - release/**
+      # # matches all version branching and tags with major version 1 or 2
+      # - v[12].[0-9]+.[0.9]+
   pull_request:
     branches: [main]
 jobs:
-  # job name: deploy
-  deploy:
-    # the job to run on the latest version of an Ubuntu Linux runner.
-    # It could run on a fresh virtual machine hosted by Github.
-    name: Deploy
+  build:
+    name: build
     runs-on: ubuntu-latest
-    env:
-      DAY_OF_WEEK: Mon
     steps:
-      # - name: Checkout
-      # checks out your repo onto the runner, allowing you run scripts or other actions
-        # uses: actions/checkout@v2
-        - shell: bash
-          env:
-            aws-access-key-id: ${{secrets.AWS_ACCESS_KEY_ID}}
-            event-context: ${{ toJSON(github.event)}}
-          # if: ${{env.DAY_OF_WEEK == 'Mon'}}
-          run: |
-            echo $event-context
-      # - name: 'Secret key'
-        # uses: aws-actions/configure-aws-credentials@v1
-        # with:
-          # aws-access-key-id: ${{secrets.AWS_ACCESS_KEY_ID}}
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Get short sha
+        id: customize-var
+        run: |
+          echo "::set-output name=short-sha::$(git rev-parse --short=8 HEAD)"
