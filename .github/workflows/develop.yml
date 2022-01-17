@@ -23,6 +23,11 @@ on:
       # - v[12].[0-9]+.[0.9]+
   pull_request:
     branches: [main]
+
+env:
+  AWS_S3_BUCKET_PROD: 'prod'
+  AWS_S3_BUCKET_DEV: 'dev'
+
 jobs:
   build:
     name: build
@@ -45,6 +50,18 @@ jobs:
         run: |
           echo "Short sha ${{steps.customize-var.outputs.short-sha}},branch ${{steps.customize-var.outputs.branch}}"
 
-      - name: testing
+      # 開發完成，最後再把註解拿掉
+      # - name: testing
+      #   if: ${{steps.customize-var.outputs.branch != 'main'}}
+      #   run: yarn install && yarn test
+
+      - name: Build dev static site
         if: ${{steps.customize-var.outputs.branch != 'main'}}
-        run: yarn install && yarn test
+        run: |
+          echo "s3 bucket name ${{env.AWS_S3_BUCKET_DEV}}"
+
+      - name: Build prod static site
+        if: ${{steps.customize-var.outputs.branch != 'main'}}
+        run: |
+          echo "s3 bucket name ${{env.AWS_S3_BUCKET_PROD}}"
+
