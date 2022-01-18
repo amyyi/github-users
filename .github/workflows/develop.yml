@@ -56,11 +56,11 @@ jobs:
         run: yarn install && yarn test
 
       - name: Build dev static site
-        if: ${{steps.customize-var.outputs.branch === 'test/action'}}
+        if: ${{steps.customize-var.outputs.branch == 'test/action'}}
         run: yarn build:dev
 
       - name: Build prod static site
-        if: ${{steps.customize-var.outputs.branch === 'main'}}
+        if: ${{steps.customize-var.outputs.branch == 'main'}}
         run: yarn build
 
       # - name: Deploy static site to S3 bucket dev
