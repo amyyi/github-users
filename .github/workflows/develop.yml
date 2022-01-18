@@ -25,8 +25,9 @@ on:
     branches: [main]
 
 env:
-  AWS_S3_BUCKET_PROD: 'prod'
-  AWS_S3_BUCKET_DEV: 'dev'
+  AWS_S3_BUCKET_PROD: prod
+  AWS_S3_BUCKET_DEV: dev
+  AWS_REGION: ap-northeast-1
 
 jobs:
   build:
@@ -63,11 +64,18 @@ jobs:
         if: ${{steps.customize-var.outputs.branch == 'main'}}
         run: yarn build
 
-      # - name: Deploy static site to S3 bucket dev
-      #   # change develop
-      #   if: ${{steps.customize-var.outputs.branch === 'test/action'}}
-      #   run: |
-      #     echo "s3 bucket name ${{env.AWS_S3_BUCKET_DEV}}"
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials
+        with:
+          aws-access-key-id: ${{secrets.AWS_ACCESS_KEY_ID}}
+          aws-secret-access-key: ${{secrets.AWS_SECRET_ACCESS_KEY}}
+          aws-regin: ${{env.AWS_REGION}}
+
+      - name: Deploy static site to S3 bucket dev
+        # change develop
+        if: ${{steps.customize-var.outputs.branch === 'test/action'}}
+        run: |
+          echo "s3 bucket name ${{env.AWS_S3_BUCKET_DEV}}"
 
 
       - name: Deploy static site to S3 bucket prod
