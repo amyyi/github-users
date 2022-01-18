@@ -73,7 +73,7 @@ jobs:
 
       - name: Deploy static site to S3 bucket dev
         # change develop
-        if: ${{steps.customize-var.outputs.branch === 'test/action'}}
+        if: ${{steps.customize-var.outputs.branch == 'test/action'}}
         run: |
           echo "s3 bucket name ${{env.AWS_S3_BUCKET_DEV}}"
 
