@@ -51,17 +51,27 @@ jobs:
           echo "Short sha ${{steps.customize-var.outputs.short-sha}},branch ${{steps.customize-var.outputs.branch}}"
 
       # 開發完成，最後再把註解拿掉
-      # - name: testing
+      - name: testing
       #   if: ${{steps.customize-var.outputs.branch != 'main'}}
-      #   run: yarn install && yarn test
+        run: yarn install && yarn test
 
       - name: Build dev static site
-        # change develop
-        if: ${{steps.customize-var.outputs.branch != 'main'}}
-        run: |
-          echo "s3 bucket name ${{env.AWS_S3_BUCKET_DEV}}"
+        if: ${{steps.customize-var.outputs.branch === 'test/action'}}
+        run: yarn build:dev
 
       - name: Build prod static site
+        if: ${{steps.customize-var.outputs.branch === 'main'}}
+        run: yarn build
+
+      # - name: Deploy static site to S3 bucket dev
+      #   # change develop
+      #   if: ${{steps.customize-var.outputs.branch === 'test/action'}}
+      #   run: |
+      #     echo "s3 bucket name ${{env.AWS_S3_BUCKET_DEV}}"
+
+
+      - name: Deploy static site to S3 bucket prod
+        # change master
         if: ${{steps.customize-var.outputs.branch == 'main'}}
         run: |
           echo "s3 bucket name ${{env.AWS_S3_BUCKET_PROD}}"
