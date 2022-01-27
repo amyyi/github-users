@@ -67,7 +67,7 @@ jobs:
         #     ${{ runner.os }}-yarn-
 
       - name: Install dependencies
-        if: steps.yarn-cache.outputs.cache-hit != 'true'
+        # if: steps.yarn-cache.outputs.cache-hit != 'true'
         run: yarn install
 
       # 開發完成，最後再把註解拿掉
