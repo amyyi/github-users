@@ -75,7 +75,7 @@ jobs:
       # 開發完成，最後再把註解拿掉
       - name: Test
       #   if: ${{steps.customize-var.outputs.branch != 'main'}}
-        run: yarn test:ci
+        run: yarn test
 
       # done: 暫時註解
       # - name: Configure AWS credentials
