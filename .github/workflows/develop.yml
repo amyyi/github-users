@@ -54,17 +54,24 @@ jobs:
         run: |
           echo "Short sha ${{steps.customize-var.outputs.short-sha}},branch ${{steps.customize-var.outputs.branch}}"
 
+      - name: Get Yarn cache directory
+        id: yarn-cache-dir-path
+        run: echo "::set-output name=dir::$(yarn cache dir)"
 
       - name: Cache node modules
         uses: actions/cache@v2
         with:
           path: '**/node_modules'
-          key: ${{runner.os}}-modules-${{ hashFiles('**/yarn.lock') }}
+          key: ${{ runner.os }}-${{ env.cache-name }}-${{ hashFiles('**/yarn.lock,json') }}
+
+      - name: Install dependencies
+        if: steps.yarn-cache.outputs.cache-hit != 'true'
+        run: yarn install
 
       # 開發完成，最後再把註解拿掉
-      - name: testing
+      - name: Test
       #   if: ${{steps.customize-var.outputs.branch != 'main'}}
-        run: yarn install && yarn test
+        run: yarn test
 
       # done: 暫時註解
       # - name: Configure AWS credentials
