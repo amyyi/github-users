@@ -102,7 +102,7 @@ jobs:
         run: yarn build
 
       - name: Test tag name
-        run: echo "tag name ${{GITHUB_REF_NAME}}"
+        run: echo "tag name ${GITHUB_REF_NAME}"
 
       # - name: Deploy static site to S3 bucket dev
       #   # change develop
