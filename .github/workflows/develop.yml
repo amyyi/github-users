@@ -28,6 +28,9 @@ env:
   AWS_S3_BUCKET_PROD: prod
   AWS_S3_BUCKET_DEV: dev
   AWS_REGION: ap-northeast-1
+  BUILD_FOLDER: build
+  CLOUDFRONT_DEV_ID: dev1234
+  CLOUDFRONT_PROD_ID: prod123
 
 jobs:
   build:
@@ -56,6 +59,15 @@ jobs:
       #   if: ${{steps.customize-var.outputs.branch != 'main'}}
         run: yarn install && yarn test
 
+      # done: 暫時註解
+      # - name: Configure AWS credentials
+      #   if: ${{steps.customize-var.outputs.branch == 'develop' || steps.customize-var.outputs.branch == 'main'}}
+      #   uses: aws-actions/configure-aws-credentials@v1
+      #   with:
+      #     aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      #     aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      #     aws-region: ${{env.AWS_REGION}}
+
       - name: Build dev static site
         if: ${{steps.customize-var.outputs.branch == 'test/action'}}
         run: yarn build:dev
@@ -64,23 +76,21 @@ jobs:
         if: ${{steps.customize-var.outputs.branch == 'main'}}
         run: yarn build
 
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{env.AWS_REGION}}
+      - name: Test tag name
+        run: echo "tag name ${{GITHUB_REF_NAME}}"
 
-      - name: Deploy static site to S3 bucket dev
-        # change develop
-        if: ${{steps.customize-var.outputs.branch == 'test/action'}}
-        run: |
-          echo "s3 bucket name ${{env.AWS_S3_BUCKET_DEV}}"
-
+      # - name: Deploy static site to S3 bucket dev
+      #   # change develop
+      #   if: ${{steps.customize-var.outputs.branch == 'test/action'}}
+      #   run: |
+      #     aws s3 sync --delete./${BUILD_FOLDER} s3://$AWS_S3_BUCKET_DEV
+      #     aws cloudfront create-invalidation --distribution-id $CLOUDFRONT_DEV_ID --paths "/*"
 
       - name: Deploy static site to S3 bucket prod
         # change master
         if: ${{steps.customize-var.outputs.branch == 'main'}}
         run: |
-          echo "s3 bucket name ${{env.AWS_S3_BUCKET_PROD}}"
+          aws s3 sync --delete./${BUILD_FOLDER} s3://$AWS_S3_BUCKET_PROD
+        # 手動點更新
+        # aws cloudfront create-invalidation --distribution-id $CLOUDFRONT_PROD_ID --paths "/*"
 
