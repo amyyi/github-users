@@ -103,6 +103,7 @@ jobs:
 
       - name: Test tag name
         id: tag
+        uses: actions/github-script@0.2.0
         with:
           script: |
               return context.payload.ref.replace(/\/refs\/tags\//, '';
