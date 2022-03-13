@@ -6,9 +6,17 @@
 # job matrix: can generate a maximum of 256 jobs per workflow run
 # No more than 500 workflow runs can de queue in a 10 second interval per repo
 
-name: github users deploy workflow2
+name: github users deploy workflow
 
-on: [workflow_dispatch]
+on:
+  workflow_dispatch:
+    inputs:
+      logLevel:
+        description: 'deploy environment'
+        required: true
+        default: 'warning'
+      tags:
+        description: 'Test scenario tags'
 
   # push:
   #   branches:
