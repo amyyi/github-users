@@ -9,20 +9,31 @@
 name: github users deploy workflow
 
 on:
-  push:
-    branches:
-      # change main to master
-      - main
-      # https://docs.github.com/en/actions/learn-github-actions/workflow-syntax-for-github-actions#patterns-to-match-branches-and-tags
-      # will remove
-      - 'test/action/*'
-      # Sequence of patterns matched against refs/tags
-    # tags:
-      # - release/**
-      # # matches all version branching and tags with major version 1 or 2
-      # - v[12].[0-9]+.[0.9]+
-  pull_request:
-    branches: [main]
+  workflow_dispatch:
+    inputs:
+      logLevel:
+        description: 'Log Level'
+        required: true
+        default: 'warning'
+      tags:
+        description: 'deploy dev'
+        required: true
+
+
+  # push:
+  #   branches:
+  #     # change main to master
+  #     - main
+  #     # https://docs.github.com/en/actions/learn-github-actions/workflow-syntax-for-github-actions#patterns-to-match-branches-and-tags
+  #     # will remove
+  #     - 'test/action/*'
+  #     # Sequence of patterns matched against refs/tags
+  #   # tags:
+  #     # - release/**
+  #     # # matches all version branching and tags with major version 1 or 2
+  #     # - v[12].[0-9]+.[0.9]+
+  # pull_request:
+  #   branches: [main]
 
 env:
   AWS_S3_BUCKET_PROD: prod
