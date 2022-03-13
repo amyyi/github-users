@@ -95,6 +95,15 @@ jobs:
       #     aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       #     aws-region: ${{env.AWS_REGION}}
 
+      # done: 暫時註解
+      # - name: Configure AWS credentials
+      #   if: ${{steps.customize-var.outputs.branch == 'develop' || steps.customize-var.outputs.branch == 'main'}}
+      #   uses: aws-actions/configure-aws-credentials@v1
+      #   with:
+      #     aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      #     aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      #     aws-region: ${{env.AWS_REGION}}
+
       - name: Build dev static site
         if: ${{steps.customize-var.outputs.branch == 'test/action'}}
         run: yarn build:dev
@@ -102,6 +111,16 @@ jobs:
       - name: Build prod static site
         if: ${{steps.customize-var.outputs.branch == 'main'}}
         run: yarn build
+
+      - name: Test tag name
+        id: tag
+        uses: actions/github-script@0.2.0
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+              return context.payload.ref.replace(/\/refs\/tags\//, '';
+      - name: Echo tag name
+        run: echo ${{ steps.tag.outputs.result }}
 
       # - name: Deploy static site to S3 bucket dev
       #   # change develop
