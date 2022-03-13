@@ -14,9 +14,7 @@ on:
       logLevel:
         description: 'deploy environment'
         required: true
-        default: 'warning'
-      tags:
-        description: 'Test scenario tags'
+        default: 'deploy:dev'
 
   # push:
   #   branches:
