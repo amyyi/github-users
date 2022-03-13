@@ -8,7 +8,7 @@
 
 name: github users deploy workflow
 
-on: [push]
+on: [workflow_dispatch]
 jobs:
   # job name: deploy
   deploy:
