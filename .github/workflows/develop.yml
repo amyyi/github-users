@@ -12,11 +12,11 @@ on:
   workflow_dispatch:
     inputs:
       logLevel:
-        description: 'Log Level'
+        description: 'deployDev'
         required: true
         default: 'warning'
       tags:
-        description: 'deploy dev'
+        description: 'deployDev'
         required: true
 
 
