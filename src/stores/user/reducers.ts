@@ -131,6 +131,8 @@ export const useUserReducer = (): UserReducer => {
     userReducer,
     initialUserState,
   )
+  // like as () => (dispatch({ type: USER_ACTION_TYPES.GET_USER_DETAIL_REQUEST }), state)
+  // To call dispatch and send state to dispatch to change state
   const userDispatch = (dispatcher: UserDispatcher) => dispatcher(dispatch, state)
   return { state, dispatch: userDispatch }
 }
