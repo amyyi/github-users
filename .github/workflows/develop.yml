@@ -15,6 +15,13 @@ on:
         description: 'deploy environment'
         required: true
         default: 'deploy:dev'
+      environment:
+        type: environment
+    # prod 要加 tag 必填
+    # tags:
+    #     description: 'Version Tag'
+    #     required: true
+    #     type: string
 
   # push:
   #   branches:
@@ -108,13 +115,14 @@ jobs:
         if: ${{steps.customize-var.outputs.branch == 'main'}}
         run: yarn build
 
-      - name: Test tag name
-        id: tag
-        uses: actions/github-script@0.2.0
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-              return context.payload.ref.replace(/\/refs\/tags\//, '';
+      # - useless
+      # - name: Test tag name
+      #   id: tag
+      #   uses: actions/github-script@0.2.0
+      #   with:
+      #     github-token: ${{ secrets.GITHUB_TOKEN }}
+      #     script: |
+      #         return context.payload.ref.replace(/\/refs\/tags\//, '';
       - name: Echo tag name
         run: echo ${{ steps.tag.outputs.result }}
 
