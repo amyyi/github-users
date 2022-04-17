@@ -11,25 +11,23 @@ name: github users deploy workflow
 on:
   workflow_dispatch:
     inputs:
-      logLevel:
-        description: 'deploy environment'
+      version:
+        description: 'version tag(master is required)'
         required: true
-        default: 'deploy:dev'
-      environment:
-        type: environment
+        default: 'v.0.0.1'
     # prod 要加 tag 必填
     # tags:
     #     description: 'Version Tag'
     #     required: true
     #     type: string
 
-  # push:
-  #   branches:
+  push:
+    branches:
   #     # change main to master
   #     - main
   #     # https://docs.github.com/en/actions/learn-github-actions/workflow-syntax-for-github-actions#patterns-to-match-branches-and-tags
   #     # will remove
-  #     - 'test/action/*'
+      - 'test/action/*'
   #     # Sequence of patterns matched against refs/tags
   #   # tags:
   #     # - release/**
