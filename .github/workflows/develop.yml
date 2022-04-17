@@ -21,13 +21,13 @@ on:
     #     required: true
     #     type: string
 
-  push:
-    branches:
+  # push:
+  #   branches:
   #     # change main to master
   #     - main
   #     # https://docs.github.com/en/actions/learn-github-actions/workflow-syntax-for-github-actions#patterns-to-match-branches-and-tags
   #     # will remove
-      - 'test/action/*'
+      # - 'test/action/*'
   #     # Sequence of patterns matched against refs/tags
   #   # tags:
   #     # - release/**
@@ -59,12 +59,17 @@ jobs:
         run: |
           echo "::set-output name=short-sha::$(git rev-parse --short=8 HEAD)"
           echo "::set-output name=build-time::$(TZ=Asia/Taipei date +'%Y-%m-%dT%H:%M:%S%z')"
-          echo "::set-output name=branch::${GITHUB_HEAD_REF}"
+          echo "::set-output name=branch::$(GITHUB_REF_NAME)"
+          echo "::set-output name=event-name::$(GITHUB_EVENT_NAME)"
+          echo "::set-output name=runner-name::$(RUNNER_NAME)"
 
       # can remove
       - name: Get variable(short sha, branch name)
         run: |
-          echo "Short sha ${{steps.customize-var.outputs.short-sha}},branch ${{steps.customize-var.outputs.branch}}"
+          echo "Short sha ${{steps.customize-var.outputs.short-sha}}"
+          echo "branch ${{steps.customize-var.outputs.branch}}"
+          echo "event name ${{steps.customize-var.outputs.event-name}}"
+          echo "runner name ${{steps.customize-var.outputs.runner-name}}"
 
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
@@ -84,7 +89,6 @@ jobs:
 
       # 開發完成，最後再把註解拿掉
       - name: Test
-      #   if: ${{steps.customize-var.outputs.branch != 'main'}}
         run: yarn test
 
       # done: 暫時註解
