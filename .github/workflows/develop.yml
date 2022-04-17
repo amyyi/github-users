@@ -120,8 +120,8 @@ jobs:
       - name: Add tag
         uses: ncipollo/release-action@v1
         with:
-          tag: ${{ steps.tag_version.outputs.new_tag }}
-          name: v ${{ steps.tag_version.outputs.new_tag }}
+          tag: ${{ steps.tag_version.outputs.new_tag || v.0.0.1 }}
+          name: v ${{ steps.tag_version.outputs.new_tag || v.0.0.1 }}
           body: ${{ steps.tag_version.outputs.changelog }}
 
 # echo "version ${{github.event.inputs.version}}"
