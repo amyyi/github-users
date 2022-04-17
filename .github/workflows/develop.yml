@@ -10,10 +10,11 @@ name: github users deploy workflow
 
 on:
   workflow_dispatch:
+    if: GITHUB_REF#refs/heads/ == 'main'
     inputs:
       version:
-        description: 'version tag(master is required)'
-        required: false
+        description: 'version tag(master is required), e.g. 0.0.1'
+        required: true
         # default: 'v.0.0.1'
         type: string
     # prod 要加 tag 必填
@@ -72,7 +73,13 @@ jobs:
           echo "branch ${{steps.customize-var.outputs.branch}}"
           echo "event name ${{steps.customize-var.outputs.event-name}}"
           echo "actor ${{steps.customize-var.outputs.actor}}"
-        # echo "version tag ${{steps.customize-var.outputs.version-tag}}"
+
+      - name: Add tag
+        # if: ${{github.event.inputs.version}} steps.customize-var.outputs.branch == 'main'
+        uses: ncipollo/release-action@v1
+        with:
+          tag: ${{ github.event.inputs.version }}
+          name: ${{ github.event.inputs.version }}
 
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
@@ -112,21 +119,12 @@ jobs:
       #     aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       #     aws-region: ${{env.AWS_REGION}}
 
-      - name: Bump version and push tag
-      # if: ${{github.event.inputs.version}}
-        id: tag_version
-        uses: mathieudutour/github-tag-action@v6.0
-        with:
-          github_token: ${{ secrets.ACTION_GITHUB_TOKEN }}
+      # - name: Bump version and push tag
+      #   id: tag_version
+      #   uses: mathieudutour/github-tag-action@v6.0
+      #   with:
+      #     github_token: ${{ secrets.ACTION_GITHUB_TOKEN }}
 
-      - name: Add tag
-        uses: ncipollo/release-action@v1
-        with:
-          tag: ${{ steps.tag_version.outputs.new_tag }}
-          name: ${{ steps.tag_version.outputs.new_tag }}
-          body: ${{ steps.tag_version.outputs.changelog }}
-
-# echo "version ${{github.event.inputs.version}}"
 
       - name: Build dev static site
         if: ${{steps.customize-var.outputs.branch == 'test/action'}}
