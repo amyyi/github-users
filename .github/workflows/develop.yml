@@ -10,11 +10,10 @@ name: github users deploy workflow
 
 on:
   workflow_dispatch:
-    if: ${{GITHUB_REF#refs/heads/ == 'main' }}
     inputs:
       version:
         description: 'version tag(master is required), e.g. 0.0.1'
-        required: true
+        required: false
         # default: 'v.0.0.1'
         type: string
     # prod 要加 tag 必填
