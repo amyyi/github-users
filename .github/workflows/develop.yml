@@ -113,7 +113,7 @@ jobs:
       #     aws-region: ${{env.AWS_REGION}}
 
       - name: Bump version and push tag
-        if: ${{github.event.inputs.version}}
+      # if: ${{github.event.inputs.version}}
         id: tag_version
         uses: mathieudutour/github-tag-action@v6.0
 
