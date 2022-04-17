@@ -72,7 +72,7 @@ jobs:
           echo "branch ${{steps.customize-var.outputs.branch}}"
           echo "event name ${{steps.customize-var.outputs.event-name}}"
           echo "actor ${{steps.customize-var.outputs.actor}}"
-        # echo "version tag ${{steps.customize-var.outputs.version-tag}"
+          echo "version tag ${{github.event.inputs.version}"
 
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
