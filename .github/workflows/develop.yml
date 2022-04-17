@@ -10,7 +10,7 @@ name: github users deploy workflow
 
 on:
   workflow_dispatch:
-    if: GITHUB_REF#refs/heads/ == 'main'
+    if: ${{GITHUB_REF#refs/heads/ == 'main' }}
     inputs:
       version:
         description: 'version tag(master is required), e.g. 0.0.1'
