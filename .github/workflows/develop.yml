@@ -13,8 +13,8 @@ on:
     inputs:
       version:
         description: 'version tag(master is required)'
-        required: true
-        default: 'v.0.0.1'
+        required: false
+        # default: 'v.0.0.1'
         type: string
     # prod 要加 tag 必填
     # tags:
@@ -63,7 +63,7 @@ jobs:
           echo "::set-output name=branch::${GITHUB_REF#refs/heads/}"
           echo "::set-output name=event-name::${GITHUB_EVENT_NAME}"
           echo "::set-output name=actor::${GITHUB_ACTOR}"
-        # echo "::set-output name=version-tag::${github.event.inputs.version}"
+          echo "::set-output name=version-tag::${github.event.inputs.version}"
 
       # can remove
       - name: Get variable(short sha, branch name)
@@ -72,7 +72,7 @@ jobs:
           echo "branch ${{steps.customize-var.outputs.branch}}"
           echo "event name ${{steps.customize-var.outputs.event-name}}"
           echo "actor ${{steps.customize-var.outputs.actor}}"
-          echo "version tag ${{github.event.inputs.version}"
+          echo "version tag ${{steps.customize-var.outputs.version-tag}}"
 
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
