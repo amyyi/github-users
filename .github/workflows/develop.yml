@@ -112,10 +112,19 @@ jobs:
       #     aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       #     aws-region: ${{env.AWS_REGION}}
 
-      - name: Add tag
+      - name: Bump version and push tag
         if: ${{github.event.inputs.version}}
-        run: |
-          echo "version ${{github.event.inputs.version}}"
+        id: tab_version
+        uses: mathieudutour/github-tag-action@v6.0
+
+      - name: Add tag
+        uses: ncipollo/release-action@v1
+        with:
+          tag: ${{ steps.tag_version.outputs.new_tag }}
+          name: Release ${{ steps.tag_version.outputs.new_tag }}
+          body: ${{ steps.tag_version.outputs.changelog }}
+
+# echo "version ${{github.event.inputs.version}}"
 
       - name: Build dev static site
         if: ${{steps.customize-var.outputs.branch == 'test/action'}}
