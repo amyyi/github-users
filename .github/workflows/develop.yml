@@ -15,7 +15,6 @@ on:
         description: 'version tag(master is required)'
         required: true
         default: 'v.0.0.1'
-        type: string
     # prod 要加 tag 必填
     # tags:
     #     description: 'Version Tag'
@@ -71,7 +70,7 @@ jobs:
           echo "Short sha ${{steps.customize-var.outputs.short-sha}}"
           echo "branch ${{steps.customize-var.outputs.branch}}"
           echo "event name ${{steps.customize-var.outputs.event-name}}"
-          echo "actor ${{steps.customize-var.outputs.runner-name}}"
+          echo "actor ${{steps.customize-var.outputs.actor}}"
           echo "version tag ${{steps.customize-var.outputs.version-tag}"
 
       - name: Get yarn cache directory path
