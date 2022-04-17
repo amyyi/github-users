@@ -61,7 +61,7 @@ jobs:
           echo "::set-output name=build-time::$(TZ=Asia/Taipei date +'%Y-%m-%dT%H:%M:%S%z')"
           echo "::set-output name=branch::${GITHUB_REF#refs/heads/}"
           echo "::set-output name=event-name::${GITHUB_EVENT_NAME}"
-          echo "::set-output name=runner-name::${RUNNER_NAME}"
+          echo "::set-output name=actor::${GITHUB_ACTOR}"
 
       # can remove
       - name: Get variable(short sha, branch name)
@@ -69,7 +69,7 @@ jobs:
           echo "Short sha ${{steps.customize-var.outputs.short-sha}}"
           echo "branch ${{steps.customize-var.outputs.branch}}"
           echo "event name ${{steps.customize-var.outputs.event-name}}"
-          echo "runner name ${{steps.customize-var.outputs.runner-name}}"
+          echo "actor ${{steps.customize-var.outputs.runner-name}}"
 
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
