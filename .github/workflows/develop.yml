@@ -166,7 +166,7 @@ jobs:
         with:
           author_name: ${{ steps.customize-var.outputs.actor }} ${{ env.AWS_S3_BUCKET_DEV }} v${{ steps.custome-var.outputs.version }}-${{ steps.custome-var.outputs.short-sha }}
           # should be the same with above job name when job name has been changed
-          job_name: Deploy to EQM-DEV
+          job_name: github users deploy workflow
           status: ${{ job.status }}
           fields: repo,commit,message,author,ref,took,job,workflow # default: repo,commit
           mention: channel
