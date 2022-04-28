@@ -161,3 +161,18 @@ jobs:
         # 手動點更新
         # aws cloudfront create-invalidation --distribution-id $CLOUDFRONT_PROD_ID --paths "/*"
 
+      - name: Slack notification
+        uses: 8398a7/action-slack@v3
+        with:
+          author_name: ${{ steps.customize-var.outputs.actor }} ${{ env.AWS_S3_BUCKET_DEV }} v${{ steps.custome-var.outputs.version }}-${{ steps.custome-var.outputs.short-sha }}
+          # should be the same with above job name when job name has been changed
+          job_name: Deploy to EQM-DEV
+          status: ${{ job.status }}
+          fields: repo,commit,message,author,ref,took,job,workflow # default: repo,commit
+          mention: channel
+          if_mention: 'failure,success'
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }} # required
+          MATRIX_CONTEXT: ${{ toJson(matrix) }} # required when fields contain jobs or tooks.
+        if: always() # Pick up events even if the job fails or is canceled.
+
