@@ -63,7 +63,7 @@ jobs:
           echo "::set-output name=branch::${GITHUB_REF#refs/heads/}"
           echo "::set-output name=event-name::${GITHUB_EVENT_NAME}"
           echo "::set-output name=actor::${GITHUB_ACTOR}"
-          echo "::set-output name=version::$(github.event.inputs.version)"
+          echo "::set-output name=version::${github.event.inputs.version}"
 
 
       # can remove
@@ -166,7 +166,7 @@ jobs:
         with:
           author_name: ${{ steps.customize-var.outputs.actor }} ${{ env.AWS_S3_BUCKET_DEV }} v${{ steps.custome-var.outputs.version }}-${{ steps.custome-var.outputs.short-sha }}
           # should be the same with above job name when job name has been changed
-          job_name: github users deploy workflow
+          job_name: build
           status: ${{ job.status }}
           fields: repo,commit,message,author,ref,took,job,workflow # default: repo,commit
           mention: channel
