@@ -63,7 +63,7 @@ jobs:
           echo "::set-output name=branch::${GITHUB_REF#refs/heads/}"
           echo "::set-output name=event-name::${GITHUB_EVENT_NAME}"
           echo "::set-output name=actor::${GITHUB_ACTOR}"
-          echo "::set-output name=version::${github.event.inputs.version}"
+        # echo "::set-output name=version::${github.event.inputs.version}"
 
 
       # can remove
@@ -73,7 +73,7 @@ jobs:
           echo "branch ${{steps.customize-var.outputs.branch}}"
           echo "event name ${{steps.customize-var.outputs.event-name}}"
           echo "actor ${{steps.customize-var.outputs.actor}}"
-          echo "version ${{steps.customize-var.outputs.version}}"
+        # echo "version ${{steps.customize-var.outputs.version}}"
 
       # - name: Add tag
         # if: ${{github.event.inputs.version}} steps.customize-var.outputs.branch == 'main'
@@ -164,7 +164,7 @@ jobs:
       - name: Slack notification
         uses: 8398a7/action-slack@v3
         with:
-          author_name: ${{ steps.customize-var.outputs.actor }} ${{ env.AWS_S3_BUCKET_DEV }} v${{ steps.custome-var.outputs.version }}-${{ steps.custome-var.outputs.short-sha }}
+          author_name: ${{ steps.customize-var.outputs.actor }} ${{ env.AWS_S3_BUCKET_DEV }} v${{ github.event.inputs.version }}-${{ steps.custome-var.outputs.short-sha }}
           # should be the same with above job name when job name has been changed
           job_name: build
           status: ${{ job.status }}
