@@ -65,11 +65,11 @@ jobs:
           echo "::set-output name=branch::${GITHUB_REF#refs/heads/}"
           echo "::set-output name=event-name::${GITHUB_EVENT_NAME}"
           echo "::set-output name=actor::${GITHUB_ACTOR}"
-          if [[ ${{ steps.customize-var.outputs.branch == 'develop' && !github.event.inputs.deployToStaging }}]]; then
+          if ${{ steps.customize-var.outputs.branch == 'develop' && !github.event.inputs.deployToStaging }}; then
             echo "::set-output name=env::${env.ENV_DEV}"
-          if [[ ${{ steps.customize-var.outputs.branch == 'master' && !github.event.inputs.deployToStaging }}]]; then
+          if ${{ steps.customize-var.outputs.branch == 'master' && !github.event.inputs.deployToStaging }}; then
             echo "::set-output name=env::${env.ENV_PROD}"
-          if [[ ${{ github.event.inputs.deployToStaging }}]]; then
+          if ${{ github.event.inputs.deployToStaging }}; then
             echo "::set-output name=env::${env.ENV_STAGING}"
         # echo "::set-output name=version::${github.event.inputs.version}"
 
