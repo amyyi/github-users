@@ -70,17 +70,17 @@ jobs:
       - name: Set customize-var env with dev
         if: ${{steps.customize-var.outputs.branch == 'develop' && !github.event.inputs.deployToStaging}}
         run: |
-          echo "::set-output name=env::${ENV_DEV}"
+          echo "::set-output name=env::${env.ENV_DEV}"
 
       - name: Set customize-var env with production
         if: ${{steps.customize-var.outputs.branch == 'master' && !github.event.inputs.deployToStaging}}
         run: |
-          echo "::set-output name=env::${ENV_PROD}"
+          echo "::set-output name=env::${env.ENV_PROD}"
 
       - name: Set customize-var env with staging
         if: ${{github.event.inputs.deployToStaging}}
         run: |
-          echo "::set-output name=env::${ENV_STAGING}"
+          echo "::set-output name=env::${env.ENV_STAGING}"
 
       # can remove
       - name: Get variable(short sha, branch name)
