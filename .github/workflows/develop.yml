@@ -94,8 +94,7 @@ jobs:
         # echo "version ${{steps.customize-var.outputs.version}}"
 
       - name: Add tag
-        if: ${{github.event.inputs.version }}
-        # if: ${{github.event.inputs.version && steps.customize-var.outputs.env == env.ENV_PROD }}
+        if: ${{github.event.inputs.version}}
         uses: ncipollo/release-action@v1
         with:
           tag: ${{ github.event.inputs.version }}
