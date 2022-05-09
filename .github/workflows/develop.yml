@@ -131,7 +131,7 @@ jobs:
 
       # done: 暫時註解
       # - name: Configure AWS credentials prod
-      #   if: ${{steps.customize-var.outputs == ENV_PROD}}
+      #   if: ${{steps.customize-var.outputs == env.ENV_PROD}}
       #   uses: aws-actions/configure-aws-credentials@v1
       #   with:
       #     aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID_PROD }}
@@ -139,7 +139,7 @@ jobs:
       #     aws-region: ${{env.AWS_REGION}}
 
       - name: Configure AWS credentials staging
-        if: ${{steps.customize-var.outputs.env == ENV_STAGING}}
+        if: ${{steps.customize-var.outputs.env == env.ENV_STAGING}}
         run: echo "branch staging"
         # uses: aws-actions/configure-aws-credentials@v1
         # with:
