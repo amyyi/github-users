@@ -65,22 +65,28 @@ jobs:
           echo "::set-output name=branch::${GITHUB_REF#refs/heads/}"
           echo "::set-output name=event-name::${GITHUB_EVENT_NAME}"
           echo "::set-output name=actor::${GITHUB_ACTOR}"
+          if [[ ${{ steps.customize-var.outputs.branch == 'develop' && !github.event.inputs.deployToStaging }}]]; then
+            echo "::set-output name=env::${env.ENV_DEV}"
+          if [[ ${{ steps.customize-var.outputs.branch == 'master' && !github.event.inputs.deployToStaging }}]]; then
+            echo "::set-output name=env::${env.ENV_PROD}"
+          if [[ ${{ github.event.inputs.deployToStaging }}]]; then
+            echo "::set-output name=env::${env.ENV_STAGING}"
         # echo "::set-output name=version::${github.event.inputs.version}"
 
-      - name: Set customize-var env with dev
-        if: ${{steps.customize-var.outputs.branch == 'develop' && !github.event.inputs.deployToStaging}}
-        run: |
-          echo "::set-output name=env::${env.ENV_DEV}"
+      # - name: Set customize-var env with dev
+      #   if: ${{steps.customize-var.outputs.branch == 'develop' && !github.event.inputs.deployToStaging}}
+      #   run: |
+      #     echo "::set-output name=env::${env.ENV_DEV}"
 
-      - name: Set customize-var env with production
-        if: ${{steps.customize-var.outputs.branch == 'master' && !github.event.inputs.deployToStaging}}
-        run: |
-          echo "::set-output name=env::${env.ENV_PROD}"
+      # - name: Set customize-var env with production
+      #   if: ${{steps.customize-var.outputs.branch == 'master' && !github.event.inputs.deployToStaging}}
+      #   run: |
+      #     echo "::set-output name=env::${env.ENV_PROD}"
 
-      - name: Set customize-var env with staging
-        if: ${{github.event.inputs.deployToStaging}}
-        run: |
-          echo "::set-output name=env::${env.ENV_STAGING}"
+      # - name: Set customize-var env with staging
+      #   if: ${{github.event.inputs.deployToStaging}}
+      #   run: |
+      #     echo "::set-output name=env::${env.ENV_STAGING}"
 
       # can remove
       - name: Get variable(short sha, branch name)
