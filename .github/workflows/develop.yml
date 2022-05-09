@@ -77,7 +77,10 @@ jobs:
           fi
 
       - name: check version whether or not require
+        id: customize-error
         if: ${{steps.customize-var.outputs.env == env.ENV_STAGING}}
+        run: |
+          "echo "::set-output name=error::version is required""
         uses: actions/github-script@v3
         with:
           script: |
@@ -192,7 +195,7 @@ jobs:
       - name: Slack notification
         uses: 8398a7/action-slack@v3
         with:
-          author_name: ${{ steps.customize-var.outputs.actor }} deploy ${{ steps.customize-var.outputs.env }} sha ${{ steps.customize-var.outputs.short-sha }} version v${{ github.event.inputs.version }}
+          author_name: ${{ steps.customize-var.outputs.actor }} deploy ${{ steps.customize-var.outputs.env }} ${{steps.customize-error.outputs.error}} sha ${{ steps.customize-var.outputs.short-sha }} version v${{ github.event.inputs.version }}
           # should be the same with above job name when job name has been changed
           job_name: build
           status: ${{ job.status }}
