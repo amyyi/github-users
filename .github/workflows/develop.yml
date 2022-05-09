@@ -47,6 +47,7 @@ env:
   ENV_DEV: develop
   ENV_PROD: production
   ENV_STAGING: staging
+  VERSION_REQUIRED: version is required
 
 jobs:
   build:
@@ -80,14 +81,14 @@ jobs:
         id: customize-error
         if: ${{steps.customize-var.outputs.env == env.ENV_STAGING && !github.event.inputs.version}}
         run: |
-          "echo "::set-output name=error::'version is required'""
+          "echo "::set-output name=error::${{env.VERSION_REQUIRED}}""
 
       - name: check version whether or throw action error
         uses: actions/github-script@v3
         if: ${{steps.customize-var.outputs.env == env.ENV_STAGING && !github.event.inputs.version}}
         with:
           script: |
-            core.setFailed('version is required')
+            core.setFailed(env.VERSION_REQUIRED)
 
       # just review variable, can remove
       - name: Get variable(short sha, branch name)
