@@ -42,6 +42,7 @@ env:
   AWS_REGION: ap-northeast-1
   BUILD_FOLDER: build
   CLOUDFRONT_DEV_ID: dev1234
+  CLOUDFRONT_DEV_STAGING: staging1234
   CLOUDFRONT_PROD_ID: prod123
   ENV_DEV: develop
   ENV_PROD: production
@@ -74,24 +75,15 @@ jobs:
           if ${{ github.event.inputs.deployToStaging }}; then
             echo "::set-output name=env::${{env.ENV_STAGING}}"
           fi
-        # echo "::set-output name=version::${github.event.inputs.version}"
 
-      # - name: Set customize-var env with dev
-      #   if: ${{steps.customize-var.outputs.branch == 'develop' && !github.event.inputs.deployToStaging}}
-      #   run: |
-      #     echo "::set-output name=env::${env.ENV_DEV}"
+      - name: check version whether or not require
+        if: ${{steps.customize-var.outputs.env == env.ENV_STAGING}}
+        uses: actions/github-script@v3
+        with:
+          script: |
+            core.setFailed('version is required')
 
-      # - name: Set customize-var env with production
-      #   if: ${{steps.customize-var.outputs.branch == 'master' && !github.event.inputs.deployToStaging}}
-      #   run: |
-      #     echo "::set-output name=env::${env.ENV_PROD}"
-
-      # - name: Set customize-var env with staging
-      #   if: ${{github.event.inputs.deployToStaging}}
-      #   run: |
-      #     echo "::set-output name=env::${env.ENV_STAGING}"
-
-      # can remove
+      # just review variable, can remove
       - name: Get variable(short sha, branch name)
         run: |
           echo "Short sha ${{steps.customize-var.outputs.short-sha}}"
@@ -101,7 +93,7 @@ jobs:
         # echo "version ${{steps.customize-var.outputs.version}}"
 
       # - name: Add tag
-        # if: ${{github.event.inputs.version}} steps.customize-var.outputs.branch == 'main'
+        # if: ${{github.event.inputs.version && steps.customize-var.outputs.env == env.ENV_PROD }}
         # uses: ncipollo/release-action@v1
         # with:
         #   tag: ${{ github.event.inputs.version }}
@@ -200,7 +192,7 @@ jobs:
       - name: Slack notification
         uses: 8398a7/action-slack@v3
         with:
-          author_name: ${{ steps.customize-var.outputs.actor }} deploy dev${{ steps.customize-var.outputs.env }} v${{ github.event.inputs.version }}-${{ steps.custome-var.outputs.short-sha }}
+          author_name: ${{ steps.customize-var.outputs.actor }} deploy ${{ steps.customize-var.outputs.env }} sha ${{ steps.customize-var.outputs.short-sha }} version v${{ github.event.inputs.version }}
           # should be the same with above job name when job name has been changed
           job_name: build
           status: ${{ job.status }}
