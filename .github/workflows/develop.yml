@@ -80,7 +80,7 @@ jobs:
         id: customize-error
         if: ${{steps.customize-var.outputs.env == env.ENV_STAGING && !github.event.inputs.version}}
         run: |
-          "echo "::set-output name=error::version is required""
+          "echo "::set-output name=error::'version is required'""
 
       - name: check version whether or throw action error
         uses: actions/github-script@v3
