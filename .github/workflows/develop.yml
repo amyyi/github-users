@@ -47,7 +47,6 @@ env:
   ENV_DEV: develop
   ENV_PROD: production
   ENV_STAGING: staging
-  VERSION_REQUIRED: version is required
 
 jobs:
   build:
@@ -93,12 +92,12 @@ jobs:
           echo "actor ${{steps.customize-var.outputs.actor}}"
         # echo "version ${{steps.customize-var.outputs.version}}"
 
-      # - name: Add tag
-      #   if: ${{github.event.inputs.version}}
-      #   uses: ncipollo/release-action@v1
-      #   with:
-      #     tag: ${{ github.event.inputs.version }}
-      #     name: ${{ github.event.inputs.version }}
+      - name: Add tag
+        if: ${{github.event.inputs.version}}
+        uses: ncipollo/release-action@v1
+        with:
+          tag: ${{ github.event.inputs.version }}
+          name: ${{ github.event.inputs.version }}
 
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
@@ -121,8 +120,8 @@ jobs:
         run: yarn test
 
       # done: 暫時註解
-      - name: Configure AWS credentials dev
-        if: ${{steps.customize-var.outputs.env == env.ENV_DEV}}
+      # - name: Configure AWS credentials dev
+      #   if: ${{steps.customize-var.outputs.env == env.ENV_DEV}}
       #   uses: aws-actions/configure-aws-credentials@v1
       #   with:
       #     aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID_DEV }}
@@ -146,11 +145,11 @@ jobs:
       #     aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       #     aws-region: ${{env.AWS_REGION}}
 
-      # - name: Bump version and push tag
-      #   id: tag_version
-      #   uses: mathieudutour/github-tag-action@v6.0
-      #   with:
-      #     github_token: ${{ secrets.ACTION_GITHUB_TOKEN }}
+      - name: Bump version and push tag
+        id: tag_version
+        uses: mathieudutour/github-tag-action@v6.0
+        with:
+          github_token: ${{ secrets.ACTION_GITHUB_TOKEN }}
 
 
       - name: Build dev static site
