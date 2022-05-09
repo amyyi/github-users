@@ -43,6 +43,9 @@ env:
   BUILD_FOLDER: build
   CLOUDFRONT_DEV_ID: dev1234
   CLOUDFRONT_PROD_ID: prod123
+  ENV_DEV: develop
+  ENV_PROD: production
+  ENV_STAGING: staging
 
 jobs:
   build:
@@ -64,6 +67,20 @@ jobs:
           echo "::set-output name=actor::${GITHUB_ACTOR}"
         # echo "::set-output name=version::${github.event.inputs.version}"
 
+      - name: Set customize-var env with dev
+        if: ${{steps.customize-var.outputs.branch == 'develop' && !github.event.inputs.deployToStaging}}
+        run: |
+          echo "::set-output name=env::${ENV_DEV}"
+
+      - name: Set customize-var env with production
+        if: ${{steps.customize-var.outputs.branch == 'master' && !github.event.inputs.deployToStaging}}
+        run: |
+          echo "::set-output name=env::${ENV_PROD}"
+
+      - name: Set customize-var env with staging
+        if: ${{github.event.inputs.deployToStaging}}
+        run: |
+          echo "::set-output name=env::${ENV_STAGING}"
 
       # can remove
       - name: Get variable(short sha, branch name)
@@ -103,7 +120,7 @@ jobs:
 
       # done: 暫時註解
       - name: Configure AWS credentials dev
-        if: ${{steps.customize-var.outputs.branch == 'test/action'}}
+        if: ${{steps.customize-var.outputs.env == ENV_DEV}}
         run: echo "branch dev"
       #   if: ${{steps.customize-var.outputs.branch == 'develop'}}
       #   uses: aws-actions/configure-aws-credentials@v1
@@ -114,7 +131,7 @@ jobs:
 
       # done: 暫時註解
       # - name: Configure AWS credentials prod
-      #   if: ${{steps.customize-var.outputs.branch == 'master'}}
+      #   if: ${{steps.customize-var.outputs == ENV_PROD}}
       #   uses: aws-actions/configure-aws-credentials@v1
       #   with:
       #     aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID_PROD }}
@@ -122,8 +139,8 @@ jobs:
       #     aws-region: ${{env.AWS_REGION}}
 
       - name: Configure AWS credentials staging
-        if: ${{github.event.inputs.deployToStaging}}
-        run: echo "deploy to staging"
+        if: ${{steps.customize-var.outputs.env == ENV_STAGING}}
+        run: echo "branch staging"
         # uses: aws-actions/configure-aws-credentials@v1
         # with:
         #   aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID_PROD }}
@@ -174,7 +191,7 @@ jobs:
       - name: Slack notification
         uses: 8398a7/action-slack@v3
         with:
-          author_name: ${{ steps.customize-var.outputs.actor }} ${{ env.AWS_S3_BUCKET_DEV }} v${{ github.event.inputs.version }}-${{ steps.custome-var.outputs.short-sha }}
+          author_name: ${{ steps.customize-var.outputs.actor }} deploy dev${{ steps.customize-var.outputs.env }} v${{ github.event.inputs.version }}-${{ steps.custome-var.outputs.short-sha }}
           # should be the same with above job name when job name has been changed
           job_name: build
           status: ${{ job.status }}
