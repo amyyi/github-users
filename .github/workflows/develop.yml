@@ -16,11 +16,10 @@ on:
         required: false
         # default: 'v.0.0.1'
         type: string
-    # prod 要加 tag 必填
-    # tags:
-    #     description: 'Version Tag'
-    #     required: true
-    #     type: string
+      deployToStaging:
+          description: 'deploy to staging'
+          required: false
+          type: boolean
 
   # push:
   #   branches:
@@ -103,20 +102,22 @@ jobs:
         run: yarn test
 
       # done: 暫時註解
-      # - name: Configure AWS credentials
-      #   if: ${{steps.customize-var.outputs.branch == 'develop' || steps.customize-var.outputs.branch == 'main'}}
+      - name: Configure AWS credentials dev
+        if: ${{steps.customize-var.outputs.branch == 'test/action'}}
+        run: echo "branch dev"
+      #   if: ${{steps.customize-var.outputs.branch == 'develop'}}
       #   uses: aws-actions/configure-aws-credentials@v1
       #   with:
-      #     aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      #     aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID_DEV }}
       #     aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       #     aws-region: ${{env.AWS_REGION}}
 
       # done: 暫時註解
-      # - name: Configure AWS credentials
-      #   if: ${{steps.customize-var.outputs.branch == 'develop' || steps.customize-var.outputs.branch == 'main'}}
+      # - name: Configure AWS credentials prod
+      #   if: ${{steps.customize-var.outputs.branch == 'master'}}
       #   uses: aws-actions/configure-aws-credentials@v1
       #   with:
-      #     aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      #     aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID_PROD }}
       #     aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       #     aws-region: ${{env.AWS_REGION}}
 
