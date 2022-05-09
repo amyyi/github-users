@@ -42,7 +42,7 @@ env:
   AWS_REGION: ap-northeast-1
   BUILD_FOLDER: build
   CLOUDFRONT_DEV_ID: dev1234
-  CLOUDFRONT_DEV_STAGING: staging1234
+  CLOUDFRONT_STAGING_ID: staging1234
   CLOUDFRONT_PROD_ID: prod123
   ENV_DEV: develop
   ENV_PROD: production
@@ -77,18 +77,12 @@ jobs:
             echo "::set-output name=env::${{env.ENV_STAGING}}"
           fi
 
-      - name: check version or add error message
-        id: customize-error
-        if: ${{steps.customize-var.outputs.env == env.ENV_STAGING && !github.event.inputs.version}}
-        run: |
-          "echo "::set-output name=error::${{env.VERSION_REQUIRED}}""
-
-      - name: check version whether or throw action error
+      - name: check version whether or not require
         uses: actions/github-script@v3
         if: ${{steps.customize-var.outputs.env == env.ENV_STAGING && !github.event.inputs.version}}
         with:
           script: |
-            core.setFailed(env.VERSION_REQUIRED)
+            core.setFailed('version is required')
 
       # just review variable, can remove
       - name: Get variable(short sha, branch name)
@@ -129,8 +123,6 @@ jobs:
       # done: 暫時註解
       - name: Configure AWS credentials dev
         if: ${{steps.customize-var.outputs.env == env.ENV_DEV}}
-        run: echo "branch dev"
-      #   if: ${{steps.customize-var.outputs.branch == 'develop'}}
       #   uses: aws-actions/configure-aws-credentials@v1
       #   with:
       #     aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID_DEV }}
@@ -146,14 +138,13 @@ jobs:
       #     aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       #     aws-region: ${{env.AWS_REGION}}
 
-      - name: Configure AWS credentials staging
-        if: ${{steps.customize-var.outputs.env == env.ENV_STAGING}}
-        run: echo "branch staging"
-        # uses: aws-actions/configure-aws-credentials@v1
-        # with:
-        #   aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID_PROD }}
-        #   aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        #   aws-region: ${{env.AWS_REGION}}
+      # - name: Configure AWS credentials staging
+      #   if: ${{steps.customize-var.outputs.env == env.ENV_STAGING}}
+      #   uses: aws-actions/configure-aws-credentials@v1
+      #   with:
+      #     aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID_STAGING }}
+      #     aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      #     aws-region: ${{env.AWS_REGION}}
 
       # - name: Bump version and push tag
       #   id: tag_version
@@ -163,43 +154,39 @@ jobs:
 
 
       - name: Build dev static site
-        if: ${{steps.customize-var.outputs.branch == 'test/action'}}
+        if: ${{steps.customize-var.outputs.env == env.ENV_DEV}}
         run: yarn build:dev
 
+      - name: Build staging static site
+        if: ${{steps.customize-var.outputs.env == env.ENV_STAGING}}
+        run: yarn build:staging
+
       - name: Build prod static site
-        if: ${{steps.customize-var.outputs.branch == 'main'}}
+        if: ${{steps.customize-var.outputs.env == env.ENV_PROD}}
         run: yarn build
 
-      # - useless
-      # - name: Test tag name
-      #   id: tag
-      #   uses: actions/github-script@0.2.0
-      #   with:
-      #     github-token: ${{ secrets.GITHUB_TOKEN }}
-      #     script: |
-      #         return context.payload.ref.replace(/\/refs\/tags\//, '';
-      - name: Echo tag name
-        run: echo ${{ steps.tag.outputs.result }}
-
       # - name: Deploy static site to S3 bucket dev
-      #   # change develop
-      #   if: ${{steps.customize-var.outputs.branch == 'test/action'}}
+      #   if: ${{steps.customize-var.outputs.env == env.ENV_DEV}}
       #   run: |
       #     aws s3 sync --delete./${BUILD_FOLDER} s3://$AWS_S3_BUCKET_DEV
       #     aws cloudfront create-invalidation --distribution-id $CLOUDFRONT_DEV_ID --paths "/*"
 
+      # - name: Deploy static site to S3 bucket staging
+      #   if: ${{steps.customize-var.outputs.env == env.ENV_STAGING}}
+      #   run: |
+      #     aws s3 sync --delete./${BUILD_FOLDER} s3://$AWS_S3_BUCKET_DEV
+      #     aws cloudfront create-invalidation --distribution-id $CLOUDFRONT_STAGING_ID --paths "/*"
+
       # - name: Deploy static site to S3 bucket prod
-      #   # change master
-      #   if: ${{steps.customize-var.outputs.branch == 'main'}}
+      #   if: ${{steps.customize-var.outputs.env == env.ENV.PROD}}
       #   run: |
       #     aws s3 sync --delete./${BUILD_FOLDER} s3://$AWS_S3_BUCKET_PROD
-        # 手動點更新
-        # aws cloudfront create-invalidation --distribution-id $CLOUDFRONT_PROD_ID --paths "/*"
+      #     aws cloudfront create-invalidation --distribution-id $CLOUDFRONT_PROD_ID --paths "/*"
 
       - name: Slack notification
         uses: 8398a7/action-slack@v3
         with:
-          author_name: ${{ steps.customize-var.outputs.actor }} deploy ${{ steps.customize-var.outputs.env }} ${{steps.customize-error.outputs.error}} sha ${{ steps.customize-var.outputs.short-sha }} version v${{ github.event.inputs.version }}
+          author_name: ${{ steps.customize-var.outputs.actor }} deploy ${{ steps.customize-var.outputs.env }} sha ${{ steps.customize-var.outputs.short-sha }} version v${{ github.event.inputs.version }}
           # should be the same with above job name when job name has been changed
           job_name: build
           status: ${{ job.status }}
