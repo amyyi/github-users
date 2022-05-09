@@ -120,7 +120,7 @@ jobs:
 
       # done: 暫時註解
       - name: Configure AWS credentials dev
-        if: ${{steps.customize-var.outputs.env == ENV_DEV}}
+        if: ${{steps.customize-var.outputs.env == env.ENV_DEV}}
         run: echo "branch dev"
       #   if: ${{steps.customize-var.outputs.branch == 'develop'}}
       #   uses: aws-actions/configure-aws-credentials@v1
