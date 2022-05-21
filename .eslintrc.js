@@ -20,6 +20,7 @@ module.exports = {
     '@typescript-eslint/no-empty-function': 'off',
     'jsonc/sort-keys': 'error',
     'eslint-disable-next-line': 'off',
+    'react-hooks/exhaustive-deps': 'warn',
   },
   env: {
     browser: true,

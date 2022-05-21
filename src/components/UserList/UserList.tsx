@@ -75,7 +75,6 @@ const UserList: React.FC = () => {
         per_page: PER_PAGE,
       }),
     )
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentPage])
 
   const openUserDetailModal = (name: string) => {
