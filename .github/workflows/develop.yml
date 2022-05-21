@@ -117,8 +117,8 @@ jobs:
       #   run: yarn install
 
       # 開發完成，最後再把註解拿掉
-      - name: Test
-        run: yarn test
+      # - name: Test
+      #   run: yarn test
 
       # done: 暫時註解
       # - name: Configure AWS credentials dev
