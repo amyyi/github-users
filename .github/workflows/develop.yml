@@ -55,6 +55,7 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+      - run: CI=false
 
       - name: Set variable(short sha, branch name)
         #  set variable should give it a id
@@ -111,9 +112,9 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-yarn-
 
-      - name: Install dependencies
-        # if: steps.yarn-cache.outputs.cache-hit != 'true'
-        run: yarn install
+      # - name: Install dependencies
+      #   # if: steps.yarn-cache.outputs.cache-hit != 'true'
+      #   run: yarn install
 
       # 開發完成，最後再把註解拿掉
       - name: Test
@@ -154,15 +155,15 @@ jobs:
 
       - name: Build dev static site
         if: ${{steps.customize-var.outputs.env == env.ENV_DEV}}
-        run: yarn build:dev
+        run: yarn install && yarn build:dev
 
       - name: Build staging static site
         if: ${{steps.customize-var.outputs.env == env.ENV_STAGING}}
-        run: yarn build:staging
+        run: yarn install && CI='' yarn build:staging
 
       - name: Build prod static site
         if: ${{steps.customize-var.outputs.env == env.ENV_PROD}}
-        run: yarn build
+        run: yarn install && yarn build
 
       # - name: Deploy static site to S3 bucket dev
       #   if: ${{steps.customize-var.outputs.env == env.ENV_DEV}}
