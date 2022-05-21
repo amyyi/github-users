@@ -78,7 +78,7 @@ jobs:
 
       - name: check version whether or not require
         uses: actions/github-script@v3
-        if: ${{steps.customize-var.outputs.env == env.ENV_STAGING && !github.event.inputs.version}}
+        if: ${{steps.customize-var.outputs.env == env.ENV_PROD && !github.event.inputs.version}}
         with:
           script: |
             core.setFailed('version is required')
