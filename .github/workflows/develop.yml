@@ -84,6 +84,13 @@ jobs:
           script: |
             core.setFailed('version is required')
 
+      - name: check env is matched
+        uses: actions/github-script@v3
+        if: ${{steps.customize-var.outputs.env == ''}}
+        with:
+          script: |
+            core.setFailed('env is not matched and can not deploy in any env')
+
       # just review variable, can remove
       - name: Get variable(short sha, branch name)
         run: |
