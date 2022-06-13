@@ -67,7 +67,7 @@ jobs:
           echo "::set-output name=branch::${GITHUB_REF#refs/heads/}"
           echo "::set-output name=event-name::${GITHUB_EVENT_NAME}"
           echo "::set-output name=actor::${GITHUB_ACTOR}"
-          if ${{ GITHUB_REF#refs/heads/ == 'develop' }}; then
+          if ${{ GITHUB_REF == 'refs/heads/develop' }}; then
             echo "::set-output name=env::${{env.ENV_DEV}}"
           fi
           if ${{ steps.customize-var.outputs.branch == 'master' && !github.event.inputs.deployToStaging }}; then
@@ -92,7 +92,7 @@ jobs:
           echo "event name ${{steps.customize-var.outputs.event-name}}"
           echo "actor ${{steps.customize-var.outputs.actor}}"
           echo "env ${{steps.customize-var.outputs.env}}"
-          echo "github branch ${{GITHUB_REF#refs/heads/}}"
+          echo "github branch ${{GITHUB_REF}}"
         # echo "version ${{steps.customize-var.outputs.version}}"
 
       - name: Add tag
