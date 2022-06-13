@@ -66,7 +66,7 @@ jobs:
           echo "::set-output name=build-time::$(TZ=Asia/Taipei date +'%Y-%m-%dT%H:%M:%S%z')"
           echo "::set-output name=branch::${GITHUB_REF#refs/heads/}"
           echo "::set-output name=event-name::${GITHUB_EVENT_NAME}"
-          echo "branch name ${{GITHUB_REF}}"
+          echo "branch name ${{GITHUB_REF_NAME}}"
           echo "::set-output name=actor::${GITHUB_ACTOR}"
           if ${{ GITHUB_REF == 'develop' }}; then
             echo "::set-output name=env::${{env.ENV_DEV}}"
