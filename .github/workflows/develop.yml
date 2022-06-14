@@ -202,7 +202,7 @@ jobs:
       - name: Slack notification
         uses: 8398a7/action-slack@v3
         with:
-          author_name: ${{ steps.customize-var.outputs.actor }} deploy ${{ steps.customize-var.outputs.env }} sha ${{ steps.customize-var.outputs.short-sha }} version v${{ github.event.inputs.version }} error ${{steps.error-message.outputs.envFail}}
+          author_name: ${{ steps.customize-var.outputs.actor }} \ndeploy ${{ steps.customize-var.outputs.env }} \nsha ${{ steps.customize-var.outputs.short-sha }} \nversion v${{ github.event.inputs.version }} \nerror ${{steps.error-message.outputs.envFail}}
           # should be the same with above job name when job name has been changed
           job_name: build
           status: ${{ job.status }}
