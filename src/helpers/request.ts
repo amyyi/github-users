@@ -9,6 +9,7 @@ const axiosInstance = axios.create({
   withCredentials: false,
 })
 
+// handle request
 axiosInstance.interceptors.response.use(
   (response) => Promise.resolve(response.data),
   (error) => {
@@ -30,6 +31,7 @@ axiosInstance.interceptors.response.use(
   },
 )
 
+// send request then get the response to convert to Observable
 const request = ({
   url = '',
   headers,

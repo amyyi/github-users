@@ -12,15 +12,14 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: 'version tag(master is required)'
+        description: 'version tag(master is required), e.g. 0.0.1'
         required: false
         # default: 'v.0.0.1'
         type: string
-    # prod 要加 tag 必填
-    # tags:
-    #     description: 'Version Tag'
-    #     required: true
-    #     type: string
+      deployToStaging:
+          description: 'deploy to staging'
+          required: false
+          type: boolean
 
   # push:
   #   branches:
@@ -43,7 +42,11 @@ env:
   AWS_REGION: ap-northeast-1
   BUILD_FOLDER: build
   CLOUDFRONT_DEV_ID: dev1234
+  CLOUDFRONT_STAGING_ID: staging1234
   CLOUDFRONT_PROD_ID: prod123
+  ENV_DEV: develop
+  ENV_PROD: production
+  ENV_STAGING: staging
 
 jobs:
   build:
@@ -52,6 +55,7 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+      - run: CI=false
 
       - name: Set variable(short sha, branch name)
         #  set variable should give it a id
@@ -63,16 +67,54 @@ jobs:
           echo "::set-output name=branch::${GITHUB_REF#refs/heads/}"
           echo "::set-output name=event-name::${GITHUB_EVENT_NAME}"
           echo "::set-output name=actor::${GITHUB_ACTOR}"
-      # echo "::set-output name=version-tag::${github.event.inputs.version}"
+          if ${{ github.ref == 'refs/heads/develop' && github.event.inputs.deployToStaging == 'false' }}; then
+            echo "::set-output name=env::${{env.ENV_DEV}}"
+          fi
+          if ${{ steps.customize-var.outputs.branch == 'refs/heads/master' && !github.event.inputs.deployToStaging }}; then
+            echo "::set-output name=env::${{env.ENV_PROD}}"
+          fi
+          if ${{ github.event.inputs.deployToStaging }}; then
+            echo "::set-output name=env::${{env.ENV_STAGING}}"
+          fi
 
-      # can remove
+      - name: check version whether or not require
+        uses: actions/github-script@v3
+        if: ${{steps.customize-var.outputs.env == env.ENV_PROD && !github.event.inputs.version}}
+        with:
+          script: |
+            core.setFailed('version is required')
+
+      - name: check env is matched
+        id: error-message
+        run: |
+          if ${{ steps.customize-var.outputs.env == '' }}; then
+            echo "::set-output name=envFail::${{'env is not matched and can not deploy in any env'}}"
+          fi
+
+      - name: throw error message
+        uses: actions/github-script@v3
+        if: ${{steps.error-message.outputs.envFail}}
+        with:
+          script: |
+            core.setFailed(steps.error-message.outputs.envFail)
+
+      # just review variable, can remove
       - name: Get variable(short sha, branch name)
         run: |
           echo "Short sha ${{steps.customize-var.outputs.short-sha}}"
           echo "branch ${{steps.customize-var.outputs.branch}}"
           echo "event name ${{steps.customize-var.outputs.event-name}}"
           echo "actor ${{steps.customize-var.outputs.actor}}"
-        # echo "version tag ${{steps.customize-var.outputs.version-tag}}"
+          echo "env ${{steps.customize-var.outputs.env}}"
+        # echo "github branch ${{GITHUB_REF}}"
+        # echo "version ${{steps.customize-var.outputs.version}}"
+
+      - name: Add tag
+        if: ${{github.event.inputs.version}}
+        uses: ncipollo/release-action@v1
+        with:
+          tag: ${{ github.event.inputs.version }}
+          name: ${{ github.event.inputs.version }}
 
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
@@ -86,79 +128,90 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-yarn-
 
-      - name: Install dependencies
-        # if: steps.yarn-cache.outputs.cache-hit != 'true'
-        run: yarn install
+      # - name: Install dependencies
+      #   # if: steps.yarn-cache.outputs.cache-hit != 'true'
+      #   run: yarn install
 
       # 開發完成，最後再把註解拿掉
-      - name: Test
-        run: yarn test
+      # - name: Test
+      #   run: yarn test
 
       # done: 暫時註解
-      # - name: Configure AWS credentials
-      #   if: ${{steps.customize-var.outputs.branch == 'develop' || steps.customize-var.outputs.branch == 'main'}}
+      # - name: Configure AWS credentials dev
+      #   if: ${{steps.customize-var.outputs.env == env.ENV_DEV}}
       #   uses: aws-actions/configure-aws-credentials@v1
       #   with:
-      #     aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      #     aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID_DEV }}
       #     aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       #     aws-region: ${{env.AWS_REGION}}
 
       # done: 暫時註解
-      # - name: Configure AWS credentials
-      #   if: ${{steps.customize-var.outputs.branch == 'develop' || steps.customize-var.outputs.branch == 'main'}}
+      # - name: Configure AWS credentials prod
+      #   if: ${{steps.customize-var.outputs == env.ENV_PROD}}
       #   uses: aws-actions/configure-aws-credentials@v1
       #   with:
-      #     aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      #     aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID_PROD }}
       #     aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       #     aws-region: ${{env.AWS_REGION}}
 
-      - name: Bump version and push tag
-      # if: ${{github.event.inputs.version}}
-        id: tag_version
-        uses: mathieudutour/github-tag-action@v6.0
-        with:
-          github_token: ${{ secrets.ACTION_GITHUB_TOKEN }}
+      # - name: Configure AWS credentials staging
+      #   if: ${{steps.customize-var.outputs.env == env.ENV_STAGING}}
+      #   uses: aws-actions/configure-aws-credentials@v1
+      #   with:
+      #     aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID_STAGING }}
+      #     aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      #     aws-region: ${{env.AWS_REGION}}
 
-      - name: Add tag
-        uses: ncipollo/release-action@v1
-        with:
-          tag: ${{ steps.tag_version.outputs.new_tag }}
-          name: ${{ steps.tag_version.outputs.new_tag }}
-          body: ${{ steps.tag_version.outputs.changelog }}
+      # - name: Bump version and push tag
+      #   id: tag_version
+      #   uses: mathieudutour/github-tag-action@v6.0
+      #   with:
+      #     github_token: ${{ secrets.ACTION_GITHUB_TOKEN }}
 
-# echo "version ${{github.event.inputs.version}}"
 
       - name: Build dev static site
-        if: ${{steps.customize-var.outputs.branch == 'test/action'}}
-        run: yarn build:dev
+        if: ${{steps.customize-var.outputs.env == env.ENV_DEV}}
+        run: yarn install && yarn build:dev
+
+      - name: Build staging static site
+        if: ${{steps.customize-var.outputs.env == env.ENV_STAGING}}
+        run: yarn install && CI='' yarn build:staging
 
       - name: Build prod static site
-        if: ${{steps.customize-var.outputs.branch == 'main'}}
-        run: yarn build
-
-      # - useless
-      # - name: Test tag name
-      #   id: tag
-      #   uses: actions/github-script@0.2.0
-      #   with:
-      #     github-token: ${{ secrets.GITHUB_TOKEN }}
-      #     script: |
-      #         return context.payload.ref.replace(/\/refs\/tags\//, '';
-      - name: Echo tag name
-        run: echo ${{ steps.tag.outputs.result }}
+        if: ${{steps.customize-var.outputs.env == env.ENV_PROD}}
+        run: yarn install && yarn build
 
       # - name: Deploy static site to S3 bucket dev
-      #   # change develop
-      #   if: ${{steps.customize-var.outputs.branch == 'test/action'}}
+      #   if: ${{steps.customize-var.outputs.env == env.ENV_DEV}}
       #   run: |
       #     aws s3 sync --delete./${BUILD_FOLDER} s3://$AWS_S3_BUCKET_DEV
       #     aws cloudfront create-invalidation --distribution-id $CLOUDFRONT_DEV_ID --paths "/*"
 
+      # - name: Deploy static site to S3 bucket staging
+      #   if: ${{steps.customize-var.outputs.env == env.ENV_STAGING}}
+      #   run: |
+      #     aws s3 sync --delete./${BUILD_FOLDER} s3://$AWS_S3_BUCKET_DEV
+      #     aws cloudfront create-invalidation --distribution-id $CLOUDFRONT_STAGING_ID --paths "/*"
+
       # - name: Deploy static site to S3 bucket prod
-      #   # change master
-      #   if: ${{steps.customize-var.outputs.branch == 'main'}}
+      #   if: ${{steps.customize-var.outputs.env == env.ENV.PROD}}
       #   run: |
       #     aws s3 sync --delete./${BUILD_FOLDER} s3://$AWS_S3_BUCKET_PROD
-        # 手動點更新
-        # aws cloudfront create-invalidation --distribution-id $CLOUDFRONT_PROD_ID --paths "/*"
+      #     aws cloudfront create-invalidation --distribution-id $CLOUDFRONT_PROD_ID --paths "/*"
+
+      - name: Slack notification
+        uses: 8398a7/action-slack@v3
+        with:
+          author_name: ${{ steps.customize-var.outputs.actor }} \ndeploy ${{ steps.customize-var.outputs.env }} \nsha ${{ steps.customize-var.outputs.short-sha }} \nversion v${{ github.event.inputs.version }} \nerror ${{steps.error-message.outputs.envFail}}
+          # should be the same with above job name when job name has been changed
+          job_name: build
+          status: ${{ job.status }}
+          text: '123\n456'
+          fields: repo,commit,message,author,ref,took,job,workflow # default: repo,commit
+          mention: channel
+          if_mention: 'failure,success'
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }} # required
+          MATRIX_CONTEXT: ${{ toJson(matrix) }} # required when fields contain jobs or tooks.
+        if: always() # Pick up events even if the job fails or is canceled.
 

@@ -6,6 +6,9 @@ import { USER_ACTION_TYPES, UserAction } from './actions'
 import { UserState } from './reducers'
 export type UserDispatcher = (dispatch: Dispatch<UserAction>, state: UserState) => void
 
+// var test = (v1) => (v2) => (`${v1}${v2}`)
+// var test2 = (fn) => fn('3388')
+// test2(test('hihi')) // hihi3388
 export const getUserList: (parameters: api.ParamsUserList) => UserDispatcher =
   (payload) => (dispatch) => {
     dispatch({ type: USER_ACTION_TYPES.GET_LIST_REQUEST })

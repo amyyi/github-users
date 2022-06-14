@@ -10,6 +10,7 @@ const App: FC = () => {
     <div className="App">
       <UserProvider>
         <UserList></UserList>
+        <div>domain: {process.env.REACT_APP_BACKEND_DOMAIN}</div>
       </UserProvider>
     </div>
   )
