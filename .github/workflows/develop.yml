@@ -88,7 +88,8 @@ jobs:
         id: error-message
         run: |
           if: ${{steps.customize-var.outputs.env}}; then
-          echo "::set-output name=envFail::'env is not matched and can not deploy in any env'"
+            echo "::set-output name=envFail::'env is not matched and can not deploy in any env'"
+          fi
 
       - name: throw error message
         uses: actions/github-script@v3
