@@ -87,8 +87,8 @@ jobs:
       - name: check env is matched
         id: error-message
         run: |
-          if ${{steps.customize-var.outputs.env}}; then
-            echo "::set-output name=envFail::'env is not matched and can not deploy in any env'"
+          if ${{ steps.customize-var.outputs.env == '' }}; then
+            echo "::set-output name=envFail::${{'env is not matched and can not deploy in any env'}}"
           fi
 
       - name: throw error message
