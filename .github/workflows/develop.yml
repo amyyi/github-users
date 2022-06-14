@@ -206,6 +206,7 @@ jobs:
           # should be the same with above job name when job name has been changed
           job_name: build
           status: ${{ job.status }}
+          text: '123\n456'
           fields: repo,commit,message,author,ref,took,job,workflow # default: repo,commit
           mention: channel
           if_mention: 'failure,success'
