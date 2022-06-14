@@ -85,11 +85,16 @@ jobs:
             core.setFailed('version is required')
 
       - name: check env is matched
+        id: error-message
+        run: |
+          echo "::set-output name=envFail::${{steps.customize-var.outputs.env == '' ? 'env is not matched and can not deploy in any env' : ''}}"
+
+      - name: throw error message
         uses: actions/github-script@v3
-        if: ${{steps.customize-var.outputs.env == ''}}
+        if: ${{steps.error-message.outputs.envFail}}
         with:
           script: |
-            core.setFailed('env is not matched and can not deploy in any env')
+            core.setFailed(steps.error-message.outputs.envFail)
 
       # just review variable, can remove
       - name: Get variable(short sha, branch name)
@@ -195,7 +200,7 @@ jobs:
       - name: Slack notification
         uses: 8398a7/action-slack@v3
         with:
-          author_name: ${{ steps.customize-var.outputs.actor }} deploy ${{ steps.customize-var.outputs.env }} sha ${{ steps.customize-var.outputs.short-sha }} version v${{ github.event.inputs.version }}
+          author_name: ${{ steps.customize-var.outputs.actor }} deploy ${{ steps.customize-var.outputs.env }} sha ${{ steps.customize-var.outputs.short-sha }} version v${{ github.event.inputs.version }} error ${{steps.error-message.outputs.envFail}}
           # should be the same with above job name when job name has been changed
           job_name: build
           status: ${{ job.status }}
